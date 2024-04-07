@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         focusColor: Colors.transparent,
       ),
       home: const Scaffold(
+        
         backgroundColor: Colors.black,
         body: Calculator(),
       ),
