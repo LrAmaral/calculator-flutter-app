@@ -79,9 +79,6 @@ class _CalculatorState extends State<Calculator> {
                   return;
                 }
                 break;
-              case '%':
-                result = value1 * (value2 / 100);
-                break;
               default:
                 return;
             }
@@ -104,13 +101,24 @@ class _CalculatorState extends State<Calculator> {
             operationColor = Colors.white;
           }
         }
+      } else if (op == '%') {
+        double value1 = double.parse(displayValue);
+        double result;
+        result = value1 / 100.0;
+
+        if (result % 1 == 0) {
+          displayValue = result.toInt().toString();
+        } else {
+          displayValue = result.toString();
+        }
+
+        storedValue = '';
+        operation = '';
+        cache += ' =$displayValue';
+        operationColor = Colors.white;
       } else if (op == '+/-') {
         if (displayValue.startsWith('-')) {
           displayValue = displayValue.substring(1);
-        } else if (displayValue.isEmpty ||
-            displayValue == '0' ||
-            displayValue == 'Error') {
-          displayValue = '-';
         } else {
           displayValue = '-$displayValue';
         }
@@ -141,7 +149,7 @@ class _CalculatorState extends State<Calculator> {
               displayValue,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: displayValue.length > 5 ? 48 : 96,
+                fontSize: displayValue.length > 5 ? 40 : 96,
               ),
             ),
           ),
@@ -174,18 +182,7 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () {
-                  if (displayValue != '' &&
-                      displayValue != '0' &&
-                      displayValue != 'Error') {
-                    if (displayValue.startsWith('-')) {
-                      displayValue = displayValue.substring(1);
-                    } else {
-                      displayValue = '-$displayValue';
-                    }
-                    setState(() {});
-                  }
-                },
+                onPressed: () => handleOperationPress('+/-'),
                 backgroundColor: SystemColors.lightGray.toColor(),
                 text: '+/-',
                 textStyle: const TextStyle(

@@ -28,7 +28,7 @@ class Button extends StatelessWidget {
         ),
         child: Number(
           onPressed: () {},
-          text: text,
+          text: text == '0' ? ' 0' : text,
           style: textStyle,
         ),
       ),
