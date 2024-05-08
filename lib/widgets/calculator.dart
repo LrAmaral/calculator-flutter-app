@@ -15,6 +15,13 @@ class _CalculatorState extends State<Calculator> {
   String operation = '';
   String cache = '';
   Color operationColor = Colors.white;
+  bool acButtonPressed = false;
+  bool plusMinusButtonPressed = false;
+  bool percentButtonPressed = false;
+  bool plusPressed = false;
+  bool multiPressed = false;
+  bool subPressed = false;
+  bool divisionPressed = false;
 
   void handleNumberPress(String number) {
     setState(() {
@@ -67,7 +74,7 @@ class _CalculatorState extends State<Calculator> {
               case 'x':
                 result = value1 * value2;
                 break;
-              case '/':
+              case '÷':
                 if (value2 != 0) {
                   result = value1 / value2;
                 } else {
@@ -164,13 +171,20 @@ class _CalculatorState extends State<Calculator> {
               ),
               Button(
                 onPressed: () {
-                  if (displayValue == '0' || displayValue == 'Error') {
-                    handleOperationPress('AC');
-                  } else {
-                    handleOperationPress('C');
-                  }
+                  setState(() {
+                    if (displayValue == '0' || displayValue == 'Error') {
+                      handleOperationPress('AC');
+                    } else {
+                      handleOperationPress('C');
+                    }
+                    acButtonPressed = true;
+                    plusMinusButtonPressed = false;
+                    percentButtonPressed = false;
+                  });
                 },
-                backgroundColor: SystemColors.lightGray.toColor(),
+                backgroundColor: acButtonPressed
+                    ? Colors.white
+                    : SystemColors.lightGray.toColor(),
                 text:
                     displayValue == '0' || displayValue == 'Error' ? 'AC' : 'C',
                 textStyle: const TextStyle(
@@ -182,8 +196,17 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('+/-'),
-                backgroundColor: SystemColors.lightGray.toColor(),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('+/-');
+                    acButtonPressed = false;
+                    plusMinusButtonPressed = true;
+                    percentButtonPressed = false;
+                  })
+                },
+                backgroundColor: plusMinusButtonPressed
+                    ? Colors.white
+                    : SystemColors.lightGray.toColor(),
                 text: '+/-',
                 textStyle: const TextStyle(
                   color: Colors.black,
@@ -194,8 +217,17 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('%'),
-                backgroundColor: SystemColors.lightGray.toColor(),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('%');
+                    acButtonPressed = false;
+                    plusMinusButtonPressed = false;
+                    percentButtonPressed = true;
+                  })
+                },
+                backgroundColor: percentButtonPressed
+                    ? Colors.white
+                    : SystemColors.lightGray.toColor(),
                 text: '%',
                 textStyle: const TextStyle(
                   color: Colors.black,
@@ -206,14 +238,24 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('/'),
-                backgroundColor: operation == '/'
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('÷');
+                    divisionPressed = true;
+                    plusPressed = false;
+                    subPressed = false;
+                    multiPressed = false;
+                  })
+                },
+                backgroundColor: operation == '÷'
                     ? operationColor
                     : SystemColors.vividGamboge.toColor(),
-                text: '/',
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
+                text: '÷',
+                textStyle: TextStyle(
+                  color: divisionPressed
+                      ? SystemColors.vividGamboge.toColor()
+                      : Colors.white,
+                  fontSize: 40,
                 ),
               ),
             ],
@@ -264,13 +306,23 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('x'),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('x');
+                    multiPressed = true;
+                    plusPressed = false;
+                    subPressed = false;
+                    divisionPressed = false;
+                  })
+                },
                 backgroundColor: operation == 'x'
                     ? operationColor
                     : SystemColors.vividGamboge.toColor(),
                 text: 'x',
-                textStyle: const TextStyle(
-                  color: Colors.white,
+                textStyle: TextStyle(
+                  color: multiPressed
+                      ? SystemColors.vividGamboge.toColor()
+                      : Colors.white,
                   fontSize: 32,
                 ),
               ),
@@ -322,13 +374,23 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('-'),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('-');
+                    subPressed = true;
+                    plusPressed = false;
+                    divisionPressed = false;
+                    multiPressed = false;
+                  })
+                },
                 backgroundColor: operation == '-'
                     ? operationColor
                     : SystemColors.vividGamboge.toColor(),
                 text: '-',
-                textStyle: const TextStyle(
-                  color: Colors.white,
+                textStyle: TextStyle(
+                  color: subPressed
+                      ? SystemColors.vividGamboge.toColor()
+                      : Colors.white,
                   fontSize: 32,
                 ),
               ),
@@ -380,13 +442,23 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('+'),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('+');
+                    plusPressed = true;
+                    divisionPressed = false;
+                    subPressed = false;
+                    multiPressed = false;
+                  })
+                },
                 backgroundColor: operation == '+'
                     ? operationColor
                     : SystemColors.vividGamboge.toColor(),
                 text: '+',
-                textStyle: const TextStyle(
-                  color: Colors.white,
+                textStyle: TextStyle(
+                  color: plusPressed
+                      ? SystemColors.vividGamboge.toColor()
+                      : Colors.white,
                   fontSize: 32,
                 ),
               ),
@@ -429,7 +501,15 @@ class _CalculatorState extends State<Calculator> {
                 width: 20,
               ),
               Button(
-                onPressed: () => handleOperationPress('='),
+                onPressed: () => {
+                  setState(() {
+                    handleOperationPress('=');
+                    plusPressed = false;
+                    divisionPressed = false;
+                    subPressed = false;
+                    multiPressed = false;
+                  })
+                },
                 backgroundColor: operation == '='
                     ? operationColor
                     : SystemColors.vividGamboge.toColor(),
