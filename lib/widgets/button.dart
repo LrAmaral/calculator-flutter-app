@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:calculator/widgets/number.dart';
 
 class Button extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -17,19 +16,26 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isZero = text == '0';
     return SizedBox(
-      width: (text == '0' ? 164 : 72),
+      width: isZero ? 164 : 72,
       height: 72,
       child: FloatingActionButton(
         backgroundColor: backgroundColor,
         onPressed: onPressed,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(text == '0' ? 28.0 : 36.0),
+          borderRadius: BorderRadius.circular(isZero ? 28.0 : 36.0),
         ),
-        child: Number(
-          onPressed: () {},
-          text: text == '0' ? ' 0' : text,
-          style: textStyle,
+        child: Align(
+          alignment: isZero ? Alignment.centerLeft : Alignment.center,
+          child: Padding(
+            padding:
+                isZero ? const EdgeInsets.only(left: 28.0) : EdgeInsets.zero,
+            child: Text(
+              text,
+              style: textStyle,
+            ),
+          ),
         ),
       ),
     );
