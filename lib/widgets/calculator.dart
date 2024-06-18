@@ -56,7 +56,9 @@ class _CalculatorState extends State<Calculator> {
         cache = '';
         operationColor = Colors.white;
       } else if (op == '=') {
-        if (storedValue.isEmpty || displayValue.isEmpty) {
+        if (storedValue.isEmpty ||
+            displayValue.isEmpty ||
+            displayValue == 'Error') {
           displayValue = '0';
         } else {
           try {
@@ -81,7 +83,7 @@ class _CalculatorState extends State<Calculator> {
                   displayValue = 'Error';
                   storedValue = '';
                   operation = '';
-                  cache = '';
+                  cache += ' Error';
                   operationColor = Colors.white;
                   return;
                 }
@@ -109,20 +111,27 @@ class _CalculatorState extends State<Calculator> {
           }
         }
       } else if (op == '%') {
-        double value1 = double.parse(displayValue);
-        double result;
-        result = value1 / 100.0;
+        try {
+          double value1 = double.parse(displayValue);
+          double result = value1 / 100.0;
 
-        if (result % 1 == 0) {
-          displayValue = result.toInt().toString();
-        } else {
-          displayValue = result.toString();
+          if (result % 1 == 0) {
+            displayValue = result.toInt().toString();
+          } else {
+            displayValue = result.toString();
+          }
+
+          storedValue = '';
+          operation = '';
+          cache += ' =$displayValue';
+          operationColor = Colors.white;
+        } catch (e) {
+          displayValue = 'Error';
+          storedValue = '';
+          operation = '';
+          cache = '';
+          operationColor = Colors.white;
         }
-
-        storedValue = '';
-        operation = '';
-        cache += ' =$displayValue';
-        operationColor = Colors.white;
       } else if (op == '+/-') {
         if (displayValue.startsWith('-')) {
           displayValue = displayValue.substring(1);
@@ -130,9 +139,16 @@ class _CalculatorState extends State<Calculator> {
           displayValue = '-$displayValue';
         }
       } else {
-        if (operation.isNotEmpty) {
+        if (displayValue == 'Error') {
+          displayValue = '0';
+        }
+
+        if (operation.isNotEmpty &&
+            storedValue.isNotEmpty &&
+            displayValue != 'Error') {
           handleOperationPress('=');
         }
+
         storedValue = displayValue;
         displayValue = '0';
         operation = op;
