@@ -50,112 +50,116 @@ class _CalculatorState extends State<Calculator> {
   void handleOperationPress(String op) {
     setState(() {
       if (op == 'C') {
+        resetCalculator();
+      } else if (displayValue == 'Error' && op != 'C') {
         displayValue = '0';
-        storedValue = '';
-        operation = '';
-        cache = '';
-        operationColor = Colors.white;
-      } else if (op == '=') {
-        if (storedValue.isEmpty ||
-            displayValue.isEmpty ||
-            displayValue == 'Error') {
-          displayValue = '0';
-        } else {
-          try {
-            double value1 = double.parse(storedValue);
-            double value2 = double.parse(displayValue);
-            double result;
-
-            switch (operation) {
-              case '+':
-                result = value1 + value2;
-                break;
-              case '-':
-                result = value1 - value2;
-                break;
-              case 'x':
-                result = value1 * value2;
-                break;
-              case '÷':
-                if (value2 != 0) {
-                  result = value1 / value2;
-                } else {
-                  displayValue = 'Error';
-                  storedValue = '';
-                  operation = '';
-                  cache += ' Error';
-                  operationColor = Colors.white;
-                  return;
-                }
-                break;
-              default:
-                return;
-            }
-
-            if (result % 1 == 0) {
-              displayValue = result.toInt().toString();
-            } else {
-              displayValue = result.toString();
-            }
-
-            storedValue = '';
-            operation = '';
-            cache += ' =$displayValue';
-            operationColor = Colors.white;
-          } catch (e) {
-            displayValue = 'Error';
-            storedValue = '';
-            operation = '';
-            cache = '';
-            operationColor = Colors.white;
-          }
-        }
-      } else if (op == '%') {
-        try {
-          double value1 = double.parse(displayValue);
-          double result = value1 / 100.0;
-
-          if (result % 1 == 0) {
-            displayValue = result.toInt().toString();
-          } else {
-            displayValue = result.toString();
-          }
-
-          storedValue = '';
-          operation = '';
-          cache += ' =$displayValue';
-          operationColor = Colors.white;
-        } catch (e) {
-          displayValue = 'Error';
-          storedValue = '';
-          operation = '';
-          cache = '';
-          operationColor = Colors.white;
-        }
-      } else if (op == '+/-') {
-        if (displayValue.startsWith('-')) {
-          displayValue = displayValue.substring(1);
-        } else {
-          displayValue = '-$displayValue';
-        }
       } else {
-        if (displayValue == 'Error') {
-          displayValue = '0';
-        }
-
-        if (operation.isNotEmpty &&
-            storedValue.isNotEmpty &&
-            displayValue != 'Error') {
-          handleOperationPress('=');
-        }
-
-        storedValue = displayValue;
-        displayValue = '0';
-        operation = op;
-        cache += ' $op ';
-        operationColor = Colors.white;
+        performOperation(op);
       }
     });
+  }
+
+  void resetCalculator() {
+    displayValue = '0';
+    storedValue = '';
+    operation = '';
+    cache = '';
+    operationColor = Colors.white;
+  }
+
+  void performOperation(String op) {
+    if (op == '=') {
+      if (storedValue.isEmpty || displayValue.isEmpty) {
+        displayValue = '0';
+      } else {
+        calculateResult();
+      }
+    } else if (op == '%') {
+      calculatePercentage();
+    } else if (op == '+/-') {
+      toggleSign();
+    } else {
+      setOperation(op);
+    }
+  }
+
+  void calculateResult() {
+    try {
+      double value1 = double.parse(storedValue);
+      double value2 = double.parse(displayValue);
+      double result;
+
+      switch (operation) {
+        case '+':
+          result = value1 + value2;
+          break;
+        case '-':
+          result = value1 - value2;
+          break;
+        case 'x':
+          result = value1 * value2;
+          break;
+        case '÷':
+          if (value2 != 0) {
+            result = value1 / value2;
+          } else {
+            displayError();
+            return;
+          }
+          break;
+        default:
+          return;
+      }
+
+      displayValue =
+          (result % 1 == 0) ? result.toInt().toString() : result.toString();
+      storedValue = '';
+      operation = '';
+      cache += ' =$displayValue';
+      operationColor = Colors.white;
+    } catch (e) {
+      displayError();
+    }
+  }
+
+  void calculatePercentage() {
+    try {
+      double value1 = double.parse(displayValue);
+      double result = value1 / 100.0;
+      displayValue =
+          (result % 1 == 0) ? result.toInt().toString() : result.toString();
+      storedValue = '';
+      operation = '';
+      cache += ' =$displayValue';
+      operationColor = Colors.white;
+    } catch (e) {
+      displayError();
+    }
+  }
+
+  void toggleSign() {
+    displayValue = displayValue.startsWith('-')
+        ? displayValue.substring(1)
+        : '-$displayValue';
+  }
+
+  void setOperation(String op) {
+    if (operation.isNotEmpty && storedValue.isNotEmpty) {
+      handleOperationPress('=');
+    }
+    storedValue = displayValue;
+    displayValue = '0';
+    operation = op;
+    cache += ' $op ';
+    operationColor = Colors.white;
+  }
+
+  void displayError() {
+    displayValue = 'Error';
+    storedValue = '';
+    operation = '';
+    cache = '';
+    operationColor = Colors.white;
   }
 
   @override
