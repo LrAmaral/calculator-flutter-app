@@ -13,7 +13,6 @@ class _CalculatorState extends State<Calculator> {
   String displayValue = '0';
   String storedValue = '';
   String operation = '';
-  String cache = '';
   Color operationColor = Colors.white;
   bool acButtonPressed = false;
   bool plusMinusButtonPressed = false;
@@ -62,9 +61,6 @@ class _CalculatorState extends State<Calculator> {
   void resetCalculator() {
     displayValue = '0';
     storedValue = '';
-    operation = '';
-    cache = '';
-    operationColor = Colors.white;
   }
 
   void performOperation(String op) {
@@ -76,7 +72,7 @@ class _CalculatorState extends State<Calculator> {
       }
     } else if (op == '%') {
       calculatePercentage();
-    } else if (op == '+/-') {
+    } else if (op == '+/-' && displayValue != 'Error') {
       toggleSign();
     } else {
       setOperation(op);
@@ -115,7 +111,6 @@ class _CalculatorState extends State<Calculator> {
           (result % 1 == 0) ? result.toInt().toString() : result.toString();
       storedValue = '';
       operation = '';
-      cache += ' =$displayValue';
       operationColor = Colors.white;
     } catch (e) {
       displayError();
@@ -130,7 +125,6 @@ class _CalculatorState extends State<Calculator> {
           (result % 1 == 0) ? result.toInt().toString() : result.toString();
       storedValue = '';
       operation = '';
-      cache += ' =$displayValue';
       operationColor = Colors.white;
     } catch (e) {
       displayError();
@@ -150,7 +144,6 @@ class _CalculatorState extends State<Calculator> {
     storedValue = displayValue;
     displayValue = '0';
     operation = op;
-    cache += ' $op ';
     operationColor = Colors.white;
   }
 
@@ -158,7 +151,6 @@ class _CalculatorState extends State<Calculator> {
     displayValue = 'Error';
     storedValue = '';
     operation = '';
-    cache = '';
     operationColor = Colors.white;
   }
 
@@ -176,7 +168,7 @@ class _CalculatorState extends State<Calculator> {
               displayValue,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: displayValue.length > 5 ? 40 : 96,
+                fontSize: displayValue.length > 5 ? 32 : 96,
               ),
             ),
           ),
