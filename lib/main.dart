@@ -1,8 +1,13 @@
 import 'package:calculator/widgets/calculator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -10,13 +15,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        focusColor: Colors.transparent,
-      ),
-      home: const Scaffold(
-        body: Calculator(),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(1080, 2400),
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            focusColor: Colors.transparent,
+          ),
+          home: const Scaffold(
+            body: Calculator(),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Button extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -18,8 +19,8 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isZero = text == '0';
     return SizedBox(
-      width: isZero ? 164 : 72,
-      height: 72,
+      width: isZero ? 456.w : 200.w,
+      height: 200.h,
       child: FloatingActionButton(
         backgroundColor: backgroundColor,
         onPressed: onPressed,

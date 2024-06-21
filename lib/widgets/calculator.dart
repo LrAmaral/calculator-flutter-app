@@ -1,6 +1,7 @@
 import 'package:calculator/widgets/button.dart';
 import 'package:calculator/theme/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Calculator extends StatefulWidget {
   const Calculator({Key? key}) : super(key: key);
@@ -168,7 +169,7 @@ class _CalculatorState extends State<Calculator> {
               displayValue,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: displayValue.length > 5 ? 32 : 96,
+                fontSize: displayValue.length > 5 ? 120.sp : 220.sp,
               ),
             ),
           ),
@@ -178,8 +179,8 @@ class _CalculatorState extends State<Calculator> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () {
@@ -204,8 +205,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -225,8 +226,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -246,8 +247,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -278,8 +279,8 @@ class _CalculatorState extends State<Calculator> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('7'),
@@ -290,8 +291,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('8'),
@@ -302,8 +303,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('9'),
@@ -314,8 +315,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -346,8 +347,8 @@ class _CalculatorState extends State<Calculator> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('4'),
@@ -358,8 +359,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('5'),
@@ -370,8 +371,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('6'),
@@ -382,8 +383,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -414,8 +415,8 @@ class _CalculatorState extends State<Calculator> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('1'),
@@ -426,8 +427,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('2'),
@@ -438,8 +439,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('3'),
@@ -450,8 +451,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -474,8 +475,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
             ],
           ),
@@ -484,8 +485,8 @@ class _CalculatorState extends State<Calculator> {
           ),
           Row(
             children: <Widget>[
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleNumberPress('0'),
@@ -497,8 +498,8 @@ class _CalculatorState extends State<Calculator> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => handleDotPress(),
@@ -509,8 +510,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
               Button(
                 onPressed: () => {
@@ -531,8 +532,8 @@ class _CalculatorState extends State<Calculator> {
                   fontSize: 32,
                 ),
               ),
-              const SizedBox(
-                width: 20,
+              SizedBox(
+                width: 54.w,
               ),
             ],
           )
