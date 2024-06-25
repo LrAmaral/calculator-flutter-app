@@ -1,5 +1,5 @@
-import 'package:calculator/widgets/button.dart';
-import 'package:calculator/theme/design_system.dart';
+import 'package:lucasamaral_bt3013758/widgets/button.dart';
+import 'package:lucasamaral_bt3013758/theme/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -67,7 +67,7 @@ class _CalculatorState extends State<Calculator> {
   void performOperation(String op) {
     if (op == '=') {
       if (storedValue.isEmpty || displayValue.isEmpty) {
-        displayValue = '0';
+        displayValue = displayValue;
       } else {
         calculateResult();
       }
