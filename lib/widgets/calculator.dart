@@ -11,7 +11,7 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-  String displayValue = '0';
+  String displayValue = '';
   String storedValue = '';
   String operation = '';
   Color operationColor = Colors.white;
@@ -83,7 +83,7 @@ class _CalculatorState extends State<Calculator> {
   void calculateResult() {
     try {
       double value1 = double.parse(storedValue);
-      double value2 = double.parse(displayValue);
+      double value2 = displayValue.isEmpty ? 0 : double.parse(displayValue);
       double result;
 
       switch (operation) {
@@ -166,7 +166,7 @@ class _CalculatorState extends State<Calculator> {
           Padding(
             padding: const EdgeInsets.only(right: 38.0),
             child: Text(
-              displayValue,
+              displayValue.isNotEmpty ? displayValue : '0',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: displayValue.length > 5 ? 120.sp : 220.sp,
@@ -265,7 +265,7 @@ class _CalculatorState extends State<Calculator> {
                     : SystemColors.vividGamboge.toColor(),
                 text: '÷',
                 textStyle: TextStyle(
-                  color: divisionPressed
+                  color: divisionPressed == true && operation == '÷'
                       ? SystemColors.vividGamboge.toColor()
                       : Colors.white,
                   fontSize: 40,
@@ -333,7 +333,7 @@ class _CalculatorState extends State<Calculator> {
                     : SystemColors.vividGamboge.toColor(),
                 text: 'x',
                 textStyle: TextStyle(
-                  color: multiPressed
+                  color: multiPressed == true && operation == 'x'
                       ? SystemColors.vividGamboge.toColor()
                       : Colors.white,
                   fontSize: 32,
@@ -401,7 +401,7 @@ class _CalculatorState extends State<Calculator> {
                     : SystemColors.vividGamboge.toColor(),
                 text: '-',
                 textStyle: TextStyle(
-                  color: subPressed
+                  color: subPressed == true && operation == '-'
                       ? SystemColors.vividGamboge.toColor()
                       : Colors.white,
                   fontSize: 32,
@@ -469,7 +469,7 @@ class _CalculatorState extends State<Calculator> {
                     : SystemColors.vividGamboge.toColor(),
                 text: '+',
                 textStyle: TextStyle(
-                  color: plusPressed
+                  color: plusPressed == true && operation == '+'
                       ? SystemColors.vividGamboge.toColor()
                       : Colors.white,
                   fontSize: 32,
