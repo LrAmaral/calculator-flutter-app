@@ -22,6 +22,9 @@ class _CalculatorState extends State<Calculator> {
   bool multiPressed = false;
   bool subPressed = false;
   bool divisionPressed = false;
+  Offset? dragStart;
+  bool dragging = false;
+  Offset? dragEnd;
 
   void handleNumberPress(String number) {
     setState(() {
@@ -163,13 +166,40 @@ class _CalculatorState extends State<Calculator> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 38.0),
-            child: Text(
-              displayValue.isNotEmpty ? displayValue : '0',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: displayValue.length > 5 ? 120.sp : 220.sp,
+          GestureDetector(
+            onPanStart: (details) {
+              dragStart = details.globalPosition;
+              dragging = true;
+            },
+            onPanUpdate: (details) {
+              if (!dragging) return; 
+
+              dragEnd = details.globalPosition;
+
+              if (dragEnd!.dx - dragStart!.dx > 50) {
+                setState(() {
+                  if (displayValue.isNotEmpty) {
+                    displayValue =
+                        displayValue.substring(0, displayValue.length - 1);
+                  }
+                });
+
+                dragging = false;
+              }
+            },
+            onPanEnd: (details) {
+              dragging = false;
+              dragStart = null;
+              dragEnd = null;
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 38.0),
+              child: Text(
+                displayValue.isNotEmpty ? displayValue : '0',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: displayValue.length > 5 ? 120.sp : 220.sp,
+                ),
               ),
             ),
           ),
