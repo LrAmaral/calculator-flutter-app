@@ -12,25 +12,26 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
   String displayValue = '';
-  String storedValue = '';
-  String operation = '';
+  
+  List<String> numbers = [];
+  List<String> operators = [];
+  
+  String? operation;
   Color operationColor = Colors.white;
-  bool acButtonPressed = false;
-  bool plusMinusButtonPressed = false;
-  bool percentButtonPressed = false;
-  bool plusPressed = false;
-  bool multiPressed = false;
-  bool subPressed = false;
-  bool divisionPressed = false;
-  Offset? dragStart;
+  
+  String currentInput = '';
+  bool resetDisplay = false;
+  
   bool dragging = false;
+  Offset? dragStart;
   Offset? dragEnd;
 
   void handleNumberPress(String number) {
     setState(() {
       if (displayValue.length < 10) {
-        if (displayValue == '0' || displayValue == 'Error') {
+        if (displayValue == '0' || displayValue == 'Error' || resetDisplay) {
           displayValue = number;
+          resetDisplay = false;
         } else {
           if (displayValue.startsWith('-')) {
             displayValue = '-$number';
@@ -38,13 +39,15 @@ class _CalculatorState extends State<Calculator> {
             displayValue += number;
           }
         }
+        currentInput += number;
       }
     });
   }
 
   void handleDotPress() {
     setState(() {
-      if (!displayValue.contains('.')) {
+      if (!currentInput.contains('.')) {
+        currentInput += '.';
         displayValue += '.';
       }
     });
@@ -52,110 +55,141 @@ class _CalculatorState extends State<Calculator> {
 
   void handleOperationPress(String op) {
     setState(() {
-      if (op == 'C') {
+      if (op == 'C' || op == 'AC') {
         resetCalculator();
-      } else if (displayValue == 'Error' && op != 'C') {
-        displayValue = '0';
+      } else if (op == '=') {
+        performOperation();
+      } else if (op == '+/-') {
+        toggleSign();
+      } else if (op == '%') {
+        calculatePercentage();
       } else {
-        performOperation(op);
+        addOperation(op);
       }
     });
   }
 
   void resetCalculator() {
-    displayValue = '0';
-    storedValue = '';
-  }
-
-  void performOperation(String op) {
-    if (op == '=') {
-      if (storedValue.isEmpty || displayValue.isEmpty) {
-        displayValue = displayValue;
-      } else {
-        calculateResult();
-      }
-    } else if (op == '%') {
-      calculatePercentage();
-    } else if (op == '+/-' && displayValue != 'Error') {
-      toggleSign();
-    } else {
-      setOperation(op);
-    }
-  }
-
-  void calculateResult() {
-    try {
-      double value1 = double.parse(storedValue);
-      double value2 = displayValue.isEmpty ? 0 : double.parse(displayValue);
-      double result;
-
-      switch (operation) {
-        case '+':
-          result = value1 + value2;
-          break;
-        case '-':
-          result = value1 - value2;
-          break;
-        case 'x':
-          result = value1 * value2;
-          break;
-        case '÷':
-          if (value2 != 0) {
-            result = value1 / value2;
-          } else {
-            displayError();
-            return;
-          }
-          break;
-        default:
-          return;
-      }
-
-      displayValue =
-          (result % 1 == 0) ? result.toInt().toString() : result.toString();
-      storedValue = '';
-      operation = '';
-      operationColor = Colors.white;
-    } catch (e) {
-      displayError();
-    }
-  }
-
-  void calculatePercentage() {
-    try {
-      double value1 = double.parse(displayValue);
-      double result = value1 / 100.0;
-      displayValue =
-          (result % 1 == 0) ? result.toInt().toString() : result.toString();
-      storedValue = '';
-      operation = '';
-      operationColor = Colors.white;
-    } catch (e) {
-      displayError();
-    }
+    setState(() {
+      displayValue = '0';
+      numbers.clear();
+      operators.clear();
+      currentInput = '';
+      resetDisplay = false;
+    });
   }
 
   void toggleSign() {
-    displayValue = displayValue.startsWith('-')
-        ? displayValue.substring(1)
-        : '-$displayValue';
+    setState(() {
+      if (displayValue == 'Error') return;
+
+      if (displayValue.startsWith('-')) {
+        displayValue = displayValue.substring(1);
+      } else {
+        displayValue = '-$displayValue';
+      }
+
+      currentInput = displayValue;
+    });
   }
 
-  void setOperation(String op) {
-    if (operation.isNotEmpty && storedValue.isNotEmpty) {
-      handleOperationPress('=');
-    }
-    storedValue = displayValue;
-    displayValue = '0';
-    operation = op;
-    operationColor = Colors.white;
+  void calculatePercentage() {
+    setState(() {
+      if (currentInput.isNotEmpty) {
+        double value = double.parse(currentInput);
+        if (value != 0) {
+          value = value / 100;
+          currentInput = value.toString();
+          displayValue = currentInput;
+        }
+      }
+    });
+  }
+
+  void addOperation(String op) {
+    setState(() {
+      if (currentInput.isNotEmpty) {
+        numbers.add(currentInput);
+        currentInput = '';
+      }
+
+      if (numbers.isNotEmpty && operators.length < numbers.length) {
+        operators.add(op);
+      } else if (operators.isNotEmpty) {
+        operators[operators.length - 1] = op;
+      }
+
+      resetDisplay = true;
+    });
+  }
+
+  void performOperation() {
+    setState(() {
+      if (currentInput.isNotEmpty) {
+        numbers.add(currentInput);
+        currentInput = '';
+      }
+
+      if (numbers.isEmpty || operators.length >= numbers.length) {
+        displayError();
+        return;
+      }
+
+      for (int i = 0; i < operators.length; i++) {
+        if (operators[i] == 'x' || operators[i] == '÷') {
+          double nLeft = double.parse(numbers[i]);
+          double nRight = double.parse(numbers[i + 1]);
+          double result;
+
+          if (operators[i] == 'x') {
+            result = nLeft * nRight;
+          } else {
+            if (nRight == 0) {
+              displayError();
+              return;
+            }
+            result = nLeft / nRight;
+          }
+
+          numbers[i] = result.toString();
+          numbers.removeAt(i + 1);
+          operators.removeAt(i);
+          i--;
+        }
+      }
+
+      double result = double.parse(numbers[0]);
+      for (int i = 0; i < operators.length; i++) {
+        double nextNumber = double.parse(numbers[i + 1]);
+        switch (operators[i]) {
+          case '+':
+            result += nextNumber;
+            break;
+          case '-':
+            result -= nextNumber;
+            break;
+        }
+      }
+
+      displayValue = result.toString();
+      if (displayValue.endsWith('.0')) {
+        displayValue = displayValue.substring(0, displayValue.length - 2);
+      }
+
+      numbers.clear();
+      operators.clear();
+      numbers.add(result.toString());
+      resetDisplay = true;
+    });
   }
 
   void displayError() {
-    displayValue = 'Error';
-    storedValue = '';
-    operation = '';
-    operationColor = Colors.white;
+    setState(() {
+      displayValue = 'Error';
+      numbers.clear();
+      operators.clear();
+      currentInput = '';
+    });
   }
 
   @override
@@ -172,7 +206,7 @@ class _CalculatorState extends State<Calculator> {
               dragging = true;
             },
             onPanUpdate: (details) {
-              if (!dragging) return; 
+              if (!dragging) return;
 
               dragEnd = details.globalPosition;
 
@@ -220,14 +254,9 @@ class _CalculatorState extends State<Calculator> {
                     } else {
                       handleOperationPress('C');
                     }
-                    acButtonPressed = true;
-                    plusMinusButtonPressed = false;
-                    percentButtonPressed = false;
                   });
                 },
-                backgroundColor: acButtonPressed
-                    ? Colors.white
-                    : SystemColors.lightGray.toColor(),
+                backgroundColor: SystemColors.lightGray.toColor(),
                 text:
                     displayValue == '0' || displayValue == 'Error' ? 'AC' : 'C',
                 textStyle: const TextStyle(
@@ -242,14 +271,9 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('+/-');
-                    acButtonPressed = false;
-                    plusMinusButtonPressed = true;
-                    percentButtonPressed = false;
                   })
                 },
-                backgroundColor: plusMinusButtonPressed
-                    ? Colors.white
-                    : SystemColors.lightGray.toColor(),
+                backgroundColor: SystemColors.lightGray.toColor(),
                 text: '+/-',
                 textStyle: const TextStyle(
                   color: Colors.black,
@@ -263,14 +287,9 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('%');
-                    acButtonPressed = false;
-                    plusMinusButtonPressed = false;
-                    percentButtonPressed = true;
                   })
                 },
-                backgroundColor: percentButtonPressed
-                    ? Colors.white
-                    : SystemColors.lightGray.toColor(),
+                backgroundColor: SystemColors.lightGray.toColor(),
                 text: '%',
                 textStyle: const TextStyle(
                   color: Colors.black,
@@ -284,20 +303,12 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('÷');
-                    divisionPressed = true;
-                    plusPressed = false;
-                    subPressed = false;
-                    multiPressed = false;
                   })
                 },
-                backgroundColor: operation == '÷'
-                    ? operationColor
-                    : SystemColors.vividGamboge.toColor(),
+                backgroundColor: SystemColors.vividGamboge.toColor(),
                 text: '÷',
                 textStyle: TextStyle(
-                  color: divisionPressed == true && operation == '÷'
-                      ? SystemColors.vividGamboge.toColor()
-                      : Colors.white,
+                  color: operationColor,
                   fontSize: 40,
                 ),
               ),
@@ -352,20 +363,12 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('x');
-                    multiPressed = true;
-                    plusPressed = false;
-                    subPressed = false;
-                    divisionPressed = false;
                   })
                 },
-                backgroundColor: operation == 'x'
-                    ? operationColor
-                    : SystemColors.vividGamboge.toColor(),
+                backgroundColor: SystemColors.vividGamboge.toColor(),
                 text: 'x',
                 textStyle: TextStyle(
-                  color: multiPressed == true && operation == 'x'
-                      ? SystemColors.vividGamboge.toColor()
-                      : Colors.white,
+                  color: operationColor,
                   fontSize: 32,
                 ),
               ),
@@ -420,20 +423,12 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('-');
-                    subPressed = true;
-                    plusPressed = false;
-                    divisionPressed = false;
-                    multiPressed = false;
                   })
                 },
-                backgroundColor: operation == '-'
-                    ? operationColor
-                    : SystemColors.vividGamboge.toColor(),
+                backgroundColor: SystemColors.vividGamboge.toColor(),
                 text: '-',
                 textStyle: TextStyle(
-                  color: subPressed == true && operation == '-'
-                      ? SystemColors.vividGamboge.toColor()
-                      : Colors.white,
+                  color: operationColor,
                   fontSize: 32,
                 ),
               ),
@@ -488,20 +483,12 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('+');
-                    plusPressed = true;
-                    divisionPressed = false;
-                    subPressed = false;
-                    multiPressed = false;
                   })
                 },
-                backgroundColor: operation == '+'
-                    ? operationColor
-                    : SystemColors.vividGamboge.toColor(),
+                backgroundColor: SystemColors.vividGamboge.toColor(),
                 text: '+',
                 textStyle: TextStyle(
-                  color: plusPressed == true && operation == '+'
-                      ? SystemColors.vividGamboge.toColor()
-                      : Colors.white,
+                  color: operationColor,
                   fontSize: 32,
                 ),
               ),
@@ -547,18 +534,12 @@ class _CalculatorState extends State<Calculator> {
                 onPressed: () => {
                   setState(() {
                     handleOperationPress('=');
-                    plusPressed = false;
-                    divisionPressed = false;
-                    subPressed = false;
-                    multiPressed = false;
                   })
                 },
-                backgroundColor: operation == '='
-                    ? operationColor
-                    : SystemColors.vividGamboge.toColor(),
+                backgroundColor: SystemColors.vividGamboge.toColor(),
                 text: '=',
-                textStyle: const TextStyle(
-                  color: Colors.white,
+                textStyle: TextStyle(
+                  color: operationColor,
                   fontSize: 32,
                 ),
               ),
